@@ -6,25 +6,24 @@ package fr.scythe.alephmachine;
 
 import javafx.application.Application;
 import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Main extends Application {
 
-    private String botDir;
     public static final Background btnBackground = new Background(new BackgroundFill(Color.grayRgb(170), new CornerRadii(5), Insets.EMPTY));
+    static final        boolean    isWindows     = System.getProperty("os.name").toLowerCase().startsWith("windows");
 
     public static void main(String[] args) {
         System.out.println("Main Method called. . .");
@@ -34,16 +33,16 @@ public class Main extends Application {
 
     // pStage = Stage primaire
     @Override
-    public void start(Stage pStage) throws Exception {
+    public void start(Stage pStage) {
         System.out.println("Launch of the app. . .");
         pStage.setTitle("Aleph Machine");
 
         // Construct of the button
         pStage.setResizable(false);
 
-        // Textfield to choose the directory of the bot
-        TextField tField = new TextField();
-        tField.setMaxSize(200, 50);
+        // Directory chooser to find the bot
+        DirectoryChooser dChooser = new DirectoryChooser();
+        dChooser.setTitle("Open file");
 
         // Construct of the buttons
         Button btnStart = new Button();
@@ -57,38 +56,44 @@ public class Main extends Application {
         btnBuild.setMaxSize(100, 50);
         btnBuild.setBackground(btnBackground);
 
+        Button btnDirChooser = new Button();
+        btnDirChooser.setText("Select a directory");
+        btnStart.setMaxSize(100, 50);
+        btnStart.setBackground(btnBackground);
+
+        AtomicReference<File> sharedDir = new AtomicReference<>();
+
+        btnDirChooser.setOnAction(event -> sharedDir.set(dChooser.showDialog(pStage)));
+
+
+
         // onClick event
-        btnStart.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(!tField.getText().isEmpty()) {
-                    System.out.println("Calling botInit() method. . .");
-                    try {
-                        botInit(tField.getText());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", tField.getText());
-                    }
-                } else {
-                    System.out.println("TextField is empty");
+        btnStart.setOnAction(event -> {
+            if(sharedDir.get().getAbsolutePath() != null) {
+                System.out.println("Calling botInit() method. . .");
+                try {
+                    botInit(sharedDir.get().getAbsolutePath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedDir.get().getAbsolutePath());
                 }
+            } else {
+                System.out.println("TextField is empty");
             }
         });
 
-        btnBuild.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(!tField.getText().isEmpty()) {
-                    System.out.println("Calling botBuild() method. . .");
-                    try {
-                        botBuild(tField.getText());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", tField.getText());
-                    }
-                } else {
-                    System.out.println("TextField is empty");
+        btnBuild.setOnAction(event -> {
+            if (sharedDir.get().getAbsolutePath() != null) {
+                System.out.println("Calling botBuild() method. . .");
+                try {
+                    botBuild(sharedDir.get().getAbsolutePath());
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedDir.get().getAbsolutePath());
                 }
+            } else {
+                System.out.println("TextField is empty");
             }
         });
 
@@ -101,7 +106,7 @@ public class Main extends Application {
 
         // Adding of the buttons
         VBox center = new VBox(5);
-        center.getChildren().addAll(tField, btnStart, btnBuild);
+        center.getChildren().addAll( btnDirChooser, btnStart, btnBuild);
         center.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         center.setAlignment(Pos.CENTER);
 
@@ -120,17 +125,52 @@ public class Main extends Application {
 
     // Build of the bot
     public static void botBuild(String botDir) throws IOException {
-        Process processBuild = Runtime.getRuntime().exec("cmd go build", null, new File(botDir));
-        Process processMKDIR = Runtime.getRuntime().exec("mkdir wow", null, new File(botDir));
+
+        if (isWindows) {
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.directory(new File(botDir));
+            processBuilder.command("go build");
+            processBuilder.redirectErrorStream(true);
+            Process p = processBuilder.start();
+
+            System.out.println("Everything is working pretty well");
+
+            InputStream is = p.getInputStream();
+            System.out.println("" + is.read());
+
+
+        } else {
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.directory(new File(botDir));
+            processBuilder.command("sh", "-a", "go", "build");
+            processBuilder.start();
+
+        }
+
         AlertBox.display("Alert - Task Started", "The command \"go build\" have been launched in :", botDir);
 
     }
 
     // Launch of the bot
     public static void botInit(String botDir) throws IOException {
-        // Process processRun = Runtime.getRuntime().exec("go run", null, new File(botDir));
-        Process processMkdir = Runtime.getRuntime().exec("mkdir wow", null, new File(botDir));
+
+        if(isWindows) {
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.directory(new File(botDir));
+            processBuilder.command("go run");
+            processBuilder.redirectErrorStream(true);
+            processBuilder.start();
+
+        } else {
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.directory(new File(botDir));
+            processBuilder.command("sh", "-a", "go", "run");
+            processBuilder.start();
+        }
         AlertBox.display("Alert - Task Started", "The command \"go run\" have been launched in :", botDir);
+
+
+
     }
 
 }
