@@ -155,6 +155,8 @@ public class Main extends Application {
     public static void botInit(String botDir) throws IOException {
 
         if(isWindows) {
+            System.out.println(botDir);
+
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.directory(new File(botDir));
             processBuilder.command("go run");
