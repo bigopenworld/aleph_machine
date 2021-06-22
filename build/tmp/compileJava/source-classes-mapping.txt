@@ -1,3 +1,5 @@
+fr/scythe/alephmachine/Main.java
+ fr.scythe.alephmachine.Main
 fr/scythe/alephmachine/AlertBox.java
  fr.scythe.alephmachine.AlertBox
 module-info.java
