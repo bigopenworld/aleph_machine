@@ -6,7 +6,6 @@ package fr.scythe.alephmachine;
 
 import javafx.application.Application;
 import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -15,7 +14,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 import java.io.File;
@@ -23,7 +21,6 @@ import java.io.IOException;
 
 public class Main extends Application {
 
-    private String botDir;
     public static final Background btnBackground = new Background(new BackgroundFill(Color.grayRgb(170), new CornerRadii(5), Insets.EMPTY));
 
     public static void main(String[] args) {
