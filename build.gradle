@@ -4,7 +4,7 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.9'
 }
 
-group 'fr.scythe'
+group 'fr.Scythe'
 version '1.0-SNAPSHOT'
 
 repositories {
