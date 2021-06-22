@@ -1,5 +1,4 @@
 fr/scythe/alephmachine/Main.java
  fr.scythe.alephmachine.Main
- fr.scythe.alephmachine.Main$1
 module-info.java
  module-info
