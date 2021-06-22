@@ -6,8 +6,6 @@ package fr.scythe.alephmachine;
 
 import javafx.application.Application;
 import javafx.scene.control.Button;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -31,7 +29,7 @@ public class Main extends Application {
 
     // pStage = Stage primaire
     @Override
-    public void start(Stage pStage) throws Exception {
+    public void start(Stage pStage) {
         System.out.println("Launch of the app. . .");
         pStage.setTitle("Aleph Machine");
 
@@ -55,37 +53,31 @@ public class Main extends Application {
         btnBuild.setBackground(btnBackground);
 
         // onClick event
-        btnStart.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(!tField.getText().isEmpty()) {
-                    System.out.println("Calling botInit() method. . .");
-                    try {
-                        botInit(tField.getText());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", tField.getText());
-                    }
-                } else {
-                    System.out.println("TextField is empty");
+        btnStart.setOnAction(event -> {
+            if(!tField.getText().isEmpty()) {
+                System.out.println("Calling botInit() method. . .");
+                try {
+                    botInit(tField.getText());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", tField.getText());
                 }
+            } else {
+                System.out.println("TextField is empty");
             }
         });
 
-        btnBuild.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(!tField.getText().isEmpty()) {
-                    System.out.println("Calling botBuild() method. . .");
-                    try {
-                        botBuild(tField.getText());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", tField.getText());
-                    }
-                } else {
-                    System.out.println("TextField is empty");
+        btnBuild.setOnAction(event -> {
+            if (!tField.getText().isEmpty()) {
+                System.out.println("Calling botBuild() method. . .");
+                try {
+                    botBuild(tField.getText());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", tField.getText());
                 }
+            } else {
+                System.out.println("TextField is empty");
             }
         });
 
@@ -117,8 +109,8 @@ public class Main extends Application {
 
     // Build of the bot
     public static void botBuild(String botDir) throws IOException {
+
         Process processBuild = Runtime.getRuntime().exec("cmd go build", null, new File(botDir));
-        Process processMKDIR = Runtime.getRuntime().exec("mkdir wow", null, new File(botDir));
         AlertBox.display("Alert - Task Started", "The command \"go build\" have been launched in :", botDir);
 
     }
@@ -128,6 +120,9 @@ public class Main extends Application {
         // Process processRun = Runtime.getRuntime().exec("go run", null, new File(botDir));
         Process processMkdir = Runtime.getRuntime().exec("mkdir wow", null, new File(botDir));
         AlertBox.display("Alert - Task Started", "The command \"go run\" have been launched in :", botDir);
+
+
+
     }
 
 }
