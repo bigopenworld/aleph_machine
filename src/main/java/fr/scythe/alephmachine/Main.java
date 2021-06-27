@@ -67,21 +67,24 @@ public class Main extends Application {
         ButtonBuilder.buttonDirChooser(btnDirChooserRun);
 
         // Get Data from lambda statement
-        AtomicReference<File> sharedDir = new AtomicReference<>();
-        btnDirChooserBuild.setOnAction(event -> sharedDir.set(dChooser.showDialog(pStage)));
+        AtomicReference<File> sharedFileBuild = new AtomicReference<>();
+        btnDirChooserBuild.setOnAction(event -> sharedFileBuild.set(dChooser.showDialog(pStage)));
 
-        AtomicReference<File> sharedFile = new AtomicReference<>();
-        btnDirChooserRun.setOnAction(e -> sharedFile.set(executableChoooser.showOpenDialog(pStage)));
+        AtomicReference<File> sharedFileRun = new AtomicReference<>();
+        btnDirChooserRun.setOnAction(e -> {
+            sharedFileRun.set(executableChoooser.showOpenDialog(pStage));
+
+        });
 
         // onClick event
         btnStart.setOnAction(event -> {
-            if(sharedFile.get().getAbsolutePath() != null) {
+            if(sharedFileRun.get().getAbsolutePath() != null) {
                 System.out.println("Calling botInit() method. . .");
                 try {
-                    BotActions.botRun(sharedFile.get().getAbsolutePath(), sharedFile.get().getName());
+                    BotActions.botRun(sharedFileRun.get().getAbsolutePath(), sharedFileRun.get().getName());
                 } catch (IOException e) {
                     e.printStackTrace();
-                    AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedDir.get().getAbsolutePath());
+                    AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedFileBuild.get().getAbsolutePath());
 
                 }
             } else {
@@ -90,14 +93,14 @@ public class Main extends Application {
         });
 
         btnBuild.setOnAction(event -> {
-            if (sharedDir.get().getAbsolutePath() != null) {
+            if (sharedFileBuild.get().getAbsolutePath() != null) {
                 System.out.println("Calling botBuild() method. . .");
                 try {
-                    BotActions.botBuild(sharedDir.get().getAbsolutePath());
+                    BotActions.botBuild(sharedFileBuild.get().getAbsolutePath());
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedDir.get().getAbsolutePath());
+                    AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedFileBuild.get().getAbsolutePath());
                 }
             } else {
                 System.out.println("TextField is empty");

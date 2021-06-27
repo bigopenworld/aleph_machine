@@ -13,18 +13,13 @@ public class BotActions {
     static final        boolean    isWindows     = System.getProperty("os.name").toLowerCase().startsWith("windows");
 
     public static void botBuild(String botDir) throws IOException {
-        File runnableDir = new File("runnable.bat");
+
         if (isWindows) {
-            String commandLine = "cmd /C C:\\Users\\utilisateur\\go\\go1.16.3\\bin\\go.exe build";
+            String commandLine = "cmd /C go build " + botDir;
+            System.out.println(botDir);
 
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.directory(new File(botDir));
-            processBuilder.command(runnableDir.getAbsolutePath());
-            processBuilder.redirectErrorStream(true);
-            Process p = processBuilder.start();
+            Process p = Runtime.getRuntime().exec(commandLine, null, new File(botDir));
 
-            InputStream is = p.getInputStream();
-            System.out.println("" + is.read());
 
         } else {
 
@@ -38,23 +33,23 @@ public class BotActions {
     }
 
     // Launch of the bot
-    public static void botRun(String botDir, String botDirLinux) throws IOException {
+    public static void botRun(String exeDir, String botDirLinux) throws IOException {
 
         if(isWindows) {
-            System.out.println(botDir);
-            ProcessBuilder pBuilder = new ProcessBuilder(botDir);
+            System.out.println(exeDir);
+            ProcessBuilder pBuilder = new ProcessBuilder(exeDir);
             pBuilder.redirectErrorStream(true);
             pBuilder.start();
 
         } else {
             ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.directory(new File(botDir));
+            processBuilder.directory(new File(exeDir));
             processBuilder.command("./" + botDirLinux);
             processBuilder.start();
 
         }
 
-        AlertBox.display("Alert - Task Started", "The bot have been launched.", "(" + botDir + ")");
+        AlertBox.display("Alert - Task Started", "The bot have been launched.", "(" + exeDir + ")");
 
     }
 
