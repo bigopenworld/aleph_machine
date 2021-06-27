@@ -13,12 +13,13 @@ public class BotActions {
     static final        boolean    isWindows     = System.getProperty("os.name").toLowerCase().startsWith("windows");
 
     public static void botBuild(String botDir) throws IOException {
+        File runnableDir = new File("runnable.bat");
         if (isWindows) {
             String commandLine = "cmd /C C:\\Users\\utilisateur\\go\\go1.16.3\\bin\\go.exe build";
 
             ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.directory(new File("C:\\GoLive"));
-            processBuilder.command(commandLine);
+            processBuilder.directory(new File(botDir));
+            processBuilder.command(runnableDir.getAbsolutePath());
             processBuilder.redirectErrorStream(true);
             Process p = processBuilder.start();
 
@@ -40,7 +41,6 @@ public class BotActions {
     public static void botRun(String botDir, String botDirLinux) throws IOException {
 
         if(isWindows) {
-
             System.out.println(botDir);
             ProcessBuilder pBuilder = new ProcessBuilder(botDir);
             pBuilder.redirectErrorStream(true);

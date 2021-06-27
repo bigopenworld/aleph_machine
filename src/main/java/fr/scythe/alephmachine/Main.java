@@ -111,14 +111,21 @@ public class Main extends Application {
         Menu menuBuild = new Menu("Build");
         menuBar.getMenus().addAll(menuBuild, menuRun);
 
+        HBox runLayout = new HBox(10);
+        runLayout.getChildren().addAll(btnDirChooserRun, btnStart);
+
+        HBox buildLayout = new HBox(10);
+        buildLayout.getChildren().addAll(btnDirChooserBuild, btnBuild);
+
         // Adding of the buttons
-        VBox center = new VBox(5);
-        center.getChildren().addAll(btnDirChooserBuild, btnDirChooserRun, btnStart, btnBuild);
+        VBox center = new VBox(15);
+        center.getChildren().addAll(runLayout, buildLayout);
         center.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         center.setAlignment(Pos.CENTER);
 
         // Adding of the stack pane (Container)
         BorderPane borderPane = new BorderPane();
+        borderPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         borderPane.setCenter(center);
         borderPane.setTop(menuVbox);
 
