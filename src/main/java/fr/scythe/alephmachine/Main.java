@@ -137,9 +137,10 @@ public class Main extends Application {
     public static void botBuild(String botDir) throws IOException {
 
         if (isWindows) {
+            File goDir = new File("user.home\\go");
+
             ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.directory(new File(botDir));
-            processBuilder.command("cmd /C go build .");
+            processBuilder.command("cmd /C C:\\Users\\utilisateur\\go\\go1.16.3\\bin\\go.exe build " + botDir);
             processBuilder.redirectErrorStream(true);
             Process p = processBuilder.start();
 
@@ -166,17 +167,11 @@ public class Main extends Application {
 
         if(isWindows) {
 
+            //TODO Create a production version of the program. Add 2 different FileChooser. One for the .exe file and one for the .go file.
+
             System.out.println(botDir);
-
-            /*
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.directory(new File(botDir));
-            processBuilder.command("cmd /C go run main.go");
-            processBuilder.redirectErrorStream(true);
-            processBuilder.start();
-            */
-
             ProcessBuilder pBuilder = new ProcessBuilder(botDir);
+            pBuilder.redirectErrorStream(true);
             pBuilder.start();
 
         } else {
