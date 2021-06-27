@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
 //TODO : Make the menubar functional.
-//TODO : Add a on:submit state (Show when a file is selectioned)
 
 public class Main extends Application {
 
