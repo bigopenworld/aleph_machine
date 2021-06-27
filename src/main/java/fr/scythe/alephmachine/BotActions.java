@@ -17,16 +17,11 @@ public class BotActions {
         if (isWindows) {
             String commandLine = "cmd /C go build " + botDir;
             System.out.println(botDir);
-
             Process p = Runtime.getRuntime().exec(commandLine, null, new File(botDir));
 
-
         } else {
-
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.directory(new File(botDir));
-            processBuilder.command("sh", "-a", "go", "build");
-            processBuilder.start();
+            String commandLine = "sh -a go build " + botDir;
+            Process p = Runtime.getRuntime().exec(commandLine, null, new File(botDir));
 
         }
         AlertBox.display("Alert - Task Started", "The command \"go build\" have been launched in :", botDir);
@@ -37,15 +32,11 @@ public class BotActions {
 
         if(isWindows) {
             System.out.println(exeDir);
-            ProcessBuilder pBuilder = new ProcessBuilder(exeDir);
-            pBuilder.redirectErrorStream(true);
-            pBuilder.start();
+            Process process = Runtime.getRuntime().exec(exeDir);
 
         } else {
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.directory(new File(exeDir));
-            processBuilder.command("./" + botDirLinux);
-            processBuilder.start();
+
+            Process process = Runtime.getRuntime().exec("./" + botDirLinux);
 
         }
 

@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Main extends Application {
 
     public static final Background btnBackground = new Background(new BackgroundFill(Color.grayRgb(170), new CornerRadii(5), Insets.EMPTY));
-    static final        boolean    isWindows     = System.getProperty("os.name").toLowerCase().startsWith("windows");
 
     public static void main(String[] args) {
         System.out.println("Main Method called. . .");
@@ -47,7 +46,7 @@ public class Main extends Application {
 
         // Construct of the buttons
         Button btnStart = new Button();
-        btnStart.setText("Start Aleph");
+        btnStart.setText("Run Aleph");
         btnStart.setMaxSize(100, 30);
         btnStart.setMinSize(100, 30);
         btnStart.setBackground(btnBackground);
@@ -61,7 +60,7 @@ public class Main extends Application {
 
 
         // Construct of the button used to select the directories
-        Button btnDirChooserBuild = new Button("Select your main.go file");
+        Button btnDirChooserBuild = new Button("Select your bot folder");
         ButtonBuilder.buttonDirChooser(btnDirChooserBuild);
         Button btnDirChooserRun = new Button("Select the .exe file");
         ButtonBuilder.buttonDirChooser(btnDirChooserRun);
