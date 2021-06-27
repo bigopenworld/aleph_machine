@@ -7,7 +7,6 @@ package fr.scythe.alephmachine;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class BotActions {
     static final        boolean    isWindows     = System.getProperty("os.name").toLowerCase().startsWith("windows");

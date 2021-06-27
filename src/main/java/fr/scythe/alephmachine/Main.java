@@ -21,6 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
+//TODO : Make the menubar functional.
+//TODO : Add a on:submit state (Show when a file is selectioned)
+
 public class Main extends Application {
 
     public static final Background btnBackground = new Background(new BackgroundFill(Color.grayRgb(170), new CornerRadii(5), Insets.EMPTY));
@@ -61,7 +64,6 @@ public class Main extends Application {
         btnBuild.setMinSize(100, 30);
         btnBuild.setBackground(btnBackground);
 
-
         // Construct of the button used to select the directories
         Button btnDirChooserBuild = new Button("Select your bot folder");
         ButtonBuilder.buttonDirChooser(btnDirChooserBuild);
@@ -70,42 +72,66 @@ public class Main extends Application {
 
         // Get Data from lambda statement
         AtomicReference<File> sharedFileBuild = new AtomicReference<>();
-        btnDirChooserBuild.setOnAction(event -> sharedFileBuild.set(dChooser.showDialog(pStage)));
+        btnDirChooserBuild.setOnAction(event -> {
+            sharedFileBuild.set(dChooser.showDialog(pStage));
+            if(sharedFileBuild != null) {
+                btnDirChooserRun.setBackground(new Background(new BackgroundFill(Color.rgb(6, 95, 40), new CornerRadii(5), Insets.EMPTY)));
+
+                btnDirChooserRun.setOnMouseExited(e -> {
+                    btnDirChooserRun.setBackground(new Background(new BackgroundFill(Color.rgb(6, 95, 40), new CornerRadii(5), Insets.EMPTY)));
+                });
+            }
+        });
 
         AtomicReference<File> sharedFileRun = new AtomicReference<>();
         btnDirChooserRun.setOnAction(e -> {
             sharedFileRun.set(executableChoooser.showOpenDialog(pStage));
+            if(sharedFileRun != null) {
+                btnDirChooserRun.setBackground(new Background(new BackgroundFill(Color.rgb(6, 95, 40), new CornerRadii(5), Insets.EMPTY)));
+
+                btnDirChooserRun.setOnMouseExited(event -> {
+                    btnDirChooserRun.setBackground(new Background(new BackgroundFill(Color.rgb(6, 95, 40), new CornerRadii(5), Insets.EMPTY)));
+                });
+
+            }
 
         });
 
         // onClick event
         btnStart.setOnAction(event -> {
-            if(sharedFileRun.get().getAbsolutePath() != null) {
-                System.out.println("Calling botInit() method. . .");
-                try {
-                    BotActions.botRun(sharedFileRun.get().getAbsolutePath(), sharedFileRun.get().getName());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedFileBuild.get().getAbsolutePath());
+            try {
+                if(sharedFileRun.get().getAbsolutePath() != null) {
+                    System.out.println("Calling botInit() method. . .");
+                    try {
+                        BotActions.botRun(sharedFileRun.get().getAbsolutePath(), sharedFileRun.get().getName());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedFileBuild.get().getAbsolutePath());
 
+                    }
+                } else {
+                    System.out.println("TextField is empty");
                 }
-            } else {
-                System.out.println("TextField is empty");
+            } catch (NullPointerException e) {
+                AlertBox.display("ALERT - Empty Location", "The path is null. Please set a valid path.", null);
             }
         });
 
         btnBuild.setOnAction(event -> {
-            if (sharedFileBuild.get().getAbsolutePath() != null) {
-                System.out.println("Calling botBuild() method. . .");
-                try {
-                    BotActions.botBuild(sharedFileBuild.get().getAbsolutePath());
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedFileBuild.get().getAbsolutePath());
+            try {
+                if (sharedFileBuild.get().getAbsolutePath() != null) {
+                    System.out.println("Calling botBuild() method. . .");
+                    try {
+                        BotActions.botBuild(sharedFileBuild.get().getAbsolutePath());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedFileBuild.get().getAbsolutePath());
+                    }
+                } else {
+                    System.out.println("TextField is empty");
                 }
-            } else {
-                System.out.println("TextField is empty");
+            } catch (NullPointerException e){
+                AlertBox.display("ALERT - Empty Location", "The path is null. Please set a valid path.", null);
             }
         });
 
