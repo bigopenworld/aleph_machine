@@ -17,7 +17,7 @@ public class BotActions {
             String commandLine = "cmd /C C:\\Users\\utilisateur\\go\\go1.16.3\\bin\\go.exe build";
 
             ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.directory(new File(botDir));
+            processBuilder.directory(new File("C:\\GoLive"));
             processBuilder.command(commandLine);
             processBuilder.redirectErrorStream(true);
             Process p = processBuilder.start();
@@ -37,11 +37,9 @@ public class BotActions {
     }
 
     // Launch of the bot
-    public static void botInit(String botDir) throws IOException {
+    public static void botRun(String botDir, String botDirLinux) throws IOException {
 
         if(isWindows) {
-
-            //TODO Create a production version of the program. Add 2 different FileChooser. One for the .exe file and one for the .go file.
 
             System.out.println(botDir);
             ProcessBuilder pBuilder = new ProcessBuilder(botDir);
@@ -49,15 +47,14 @@ public class BotActions {
             pBuilder.start();
 
         } else {
-
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.directory(new File(botDir));
-            processBuilder.command("sh", "-a", "go", "run");
+            processBuilder.command("./" + botDirLinux);
             processBuilder.start();
 
         }
 
-        AlertBox.display("Alert - Task Started", "The command \"go run\" have been launched in :", botDir);
+        AlertBox.display("Alert - Task Started", "The bot have been launched.", "(" + botDir + ")");
 
     }
 

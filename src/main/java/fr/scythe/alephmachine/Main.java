@@ -41,7 +41,9 @@ public class Main extends Application {
 
         // Directory Directorychooser to find the bot
         DirectoryChooser dChooser = new DirectoryChooser();
-        dChooser.setTitle("Open file");
+        dChooser.setTitle("Open folder");
+        FileChooser executableChoooser = new FileChooser();
+        executableChoooser.setTitle("Open .exe file");
 
         // Construct of the buttons
         Button btnStart = new Button();
@@ -68,12 +70,15 @@ public class Main extends Application {
         AtomicReference<File> sharedDir = new AtomicReference<>();
         btnDirChooserBuild.setOnAction(event -> sharedDir.set(dChooser.showDialog(pStage)));
 
+        AtomicReference<File> sharedFile = new AtomicReference<>();
+        btnDirChooserRun.setOnAction(e -> sharedFile.set(executableChoooser.showOpenDialog(pStage)));
+
         // onClick event
         btnStart.setOnAction(event -> {
-            if(sharedDir.get().getAbsolutePath() != null) {
+            if(sharedFile.get().getAbsolutePath() != null) {
                 System.out.println("Calling botInit() method. . .");
                 try {
-                    BotActions.botInit(sharedDir.get().getAbsolutePath());
+                    BotActions.botRun(sharedFile.get().getAbsolutePath(), sharedFile.get().getName());
                 } catch (IOException e) {
                     e.printStackTrace();
                     AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedDir.get().getAbsolutePath());
