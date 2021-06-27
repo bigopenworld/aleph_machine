@@ -11,7 +11,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
@@ -30,7 +32,6 @@ public class Main extends Application {
         launch(args);
     }
 
-
     // pStage = Stage primaire
     @Override
     public void start(Stage pStage) {
@@ -40,32 +41,41 @@ public class Main extends Application {
         // Construct of the button
         pStage.setResizable(false);
 
-        // Directory chooser to find the bot
-        DirectoryChooser dChooser = new DirectoryChooser();
+        // Directory Directorychooser to find the bot
+        FileChooser dChooser = new FileChooser();
         dChooser.setTitle("Open file");
 
         // Construct of the buttons
         Button btnStart = new Button();
         btnStart.setText("Start Aleph");
-        btnStart.setMaxSize(100, 50);
+        btnStart.setMaxSize(100, 30);
+        btnStart.setMinSize(100, 30);
         btnStart.setBackground(btnBackground);
 
         Button btnBuild = new Button();
         btnBuild.setText("Build");
         btnBuild.setPadding(new Insets(5));
-        btnBuild.setMaxSize(100, 50);
+        btnBuild.setMaxSize(100, 30);
+        btnBuild.setMinSize(100, 30);
         btnBuild.setBackground(btnBackground);
 
         Button btnDirChooser = new Button();
         btnDirChooser.setText("Select a directory");
-        btnStart.setMaxSize(100, 50);
-        btnStart.setBackground(btnBackground);
+        btnDirChooser.setBackground(new Background(new BackgroundFill(Color.rgb(76, 149, 255), new CornerRadii(5), Insets.EMPTY)));
+        btnDirChooser.setFont(Font.font("Verdana"));
+        btnDirChooser.setMaxSize(170, 30);
+        btnDirChooser.setMinSize(170, 30);
+        btnDirChooser.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(5), BorderWidths.DEFAULT)));
+        btnDirChooser.setOnMouseEntered(event -> {
+            btnDirChooser.setBackground(new Background(new BackgroundFill(Color.rgb(34, 124, 255), new CornerRadii(5), Insets.EMPTY)));
+        });
+        btnDirChooser.setOnMouseExited(event -> {
+            btnDirChooser.setBackground(new Background(new BackgroundFill(Color.rgb(76, 149, 255), new CornerRadii(5), Insets.EMPTY)));
+        });
 
         AtomicReference<File> sharedDir = new AtomicReference<>();
 
-        btnDirChooser.setOnAction(event -> sharedDir.set(dChooser.showDialog(pStage)));
-
-
+        btnDirChooser.setOnAction(event -> sharedDir.set(dChooser.showOpenDialog(pStage)));
 
         // onClick event
         btnStart.setOnAction(event -> {
@@ -76,6 +86,7 @@ public class Main extends Application {
                 } catch (IOException e) {
                     e.printStackTrace();
                     AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedDir.get().getAbsolutePath());
+
                 }
             } else {
                 System.out.println("TextField is empty");
@@ -120,7 +131,6 @@ public class Main extends Application {
         pStage.setScene(pScene);
         pStage.show();
 
-
     }
 
     // Build of the bot
@@ -129,7 +139,7 @@ public class Main extends Application {
         if (isWindows) {
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.directory(new File(botDir));
-            processBuilder.command("go build");
+            processBuilder.command("cmd /C go build .");
             processBuilder.redirectErrorStream(true);
             Process p = processBuilder.start();
 
@@ -138,8 +148,8 @@ public class Main extends Application {
             InputStream is = p.getInputStream();
             System.out.println("" + is.read());
 
-
         } else {
+
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.directory(new File(botDir));
             processBuilder.command("sh", "-a", "go", "build");
@@ -155,23 +165,30 @@ public class Main extends Application {
     public static void botInit(String botDir) throws IOException {
 
         if(isWindows) {
+
             System.out.println(botDir);
 
+            /*
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.directory(new File(botDir));
-            processBuilder.command("go run");
+            processBuilder.command("cmd /C go run main.go");
             processBuilder.redirectErrorStream(true);
             processBuilder.start();
+            */
+
+            ProcessBuilder pBuilder = new ProcessBuilder(botDir);
+            pBuilder.start();
 
         } else {
+
             ProcessBuilder processBuilder = new ProcessBuilder();
             processBuilder.directory(new File(botDir));
             processBuilder.command("sh", "-a", "go", "run");
             processBuilder.start();
+
         }
+
         AlertBox.display("Alert - Task Started", "The command \"go run\" have been launched in :", botDir);
-
-
 
     }
 
