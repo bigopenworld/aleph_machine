@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
@@ -34,6 +35,8 @@ public class Main extends Application {
     public void start(Stage pStage) {
         System.out.println("Launch of the app. . .");
         pStage.setTitle("Aleph Machine");
+        Image iconStage = new Image("file:aleph_icon.jpg");
+        pStage.getIcons().add(iconStage);
 
         // Construct of the button
         pStage.setResizable(false);
@@ -115,9 +118,11 @@ public class Main extends Application {
 
         HBox runLayout = new HBox(10);
         runLayout.getChildren().addAll(btnDirChooserRun, btnStart);
+        runLayout.setAlignment(Pos.CENTER);
 
         HBox buildLayout = new HBox(10);
         buildLayout.getChildren().addAll(btnDirChooserBuild, btnBuild);
+        buildLayout.setAlignment(Pos.CENTER);
 
         // Adding of the buttons
         VBox center = new VBox(15);

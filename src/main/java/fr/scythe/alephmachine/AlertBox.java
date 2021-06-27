@@ -5,7 +5,6 @@
 
 package fr.scythe.alephmachine;
 
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -32,9 +31,7 @@ public class AlertBox {
         Button buttonClose = new Button("Close");
         buttonClose.setBackground(Main.btnBackground);
         buttonClose.setMaxSize(50, 30);
-        buttonClose.setOnAction(e -> {
-            window.close();
-        });
+        buttonClose.setOnAction(e -> window.close());
 
         VBox vBox = new VBox(20);
         vBox.getChildren().addAll(contentLabel, pathLabel, buttonClose);

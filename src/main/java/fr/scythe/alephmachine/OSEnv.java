@@ -5,8 +5,6 @@
 
 package fr.scythe.alephmachine;
 
-import java.util.Map;
-
 public class OSEnv {
 
     public static String getGoPath() {
