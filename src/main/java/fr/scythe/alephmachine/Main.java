@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
 //TODO : Make the menubar functional.
+//TODO : Export the project as a .jar artifact.
 
 public class Main extends Application {
 
