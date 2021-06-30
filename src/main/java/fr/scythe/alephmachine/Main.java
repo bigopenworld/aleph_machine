@@ -28,11 +28,6 @@ public class Main extends Application {
 
     public static final Background btnBackground = new Background(new BackgroundFill(Color.grayRgb(170), new CornerRadii(5), Insets.EMPTY));
 
-    public static void main(String[] args) {
-        System.out.println("Main Method called. . .");
-        launch(args);
-    }
-
     // pStage = Stage primaire
     @Override
     public void start(Stage pStage) {
@@ -170,6 +165,9 @@ public class Main extends Application {
     }
 
     // Build of the bot
-
+    public static void main(String[] args) {
+        System.out.println("Main Method called. . .");
+        launch(args);
+    }
 
 }
