@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'idea'
 }
 
 group 'fr.Scythe'
@@ -26,3 +27,9 @@ javafx {
 }
 
 mainClassName = 'fr.scythe.alephmachine.Main'
+
+sourceSets.main.output.resourcesDir = "build/classes/java/main"
+
+idea {
+    module.outputDir file("out/production/classes")
+}

@@ -9,91 +9,124 @@ import javafx.scene.control.Button;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicReference;
+
+//TODO : Make the menubar functional.
+//TODO : Export the project as a .jar artifact.
 
 public class Main extends Application {
 
     public static final Background btnBackground = new Background(new BackgroundFill(Color.grayRgb(170), new CornerRadii(5), Insets.EMPTY));
-    static final        boolean    isWindows     = System.getProperty("os.name").toLowerCase().startsWith("windows");
-
-    public static void main(String[] args) {
-        System.out.println("Main Method called. . .");
-        launch(args);
-    }
-
 
     // pStage = Stage primaire
     @Override
     public void start(Stage pStage) {
         System.out.println("Launch of the app. . .");
         pStage.setTitle("Aleph Machine");
+        Image iconStage = new Image("file:aleph_icon.jpg");
+        pStage.getIcons().add(iconStage);
 
         // Construct of the button
         pStage.setResizable(false);
 
-        // Directory chooser to find the bot
+        // Directory Directorychooser to find the bot
         DirectoryChooser dChooser = new DirectoryChooser();
-        dChooser.setTitle("Open file");
+        dChooser.setTitle("Open folder");
+        FileChooser executableChoooser = new FileChooser();
+        executableChoooser.setTitle("Open .exe file");
 
         // Construct of the buttons
         Button btnStart = new Button();
-        btnStart.setText("Start Aleph");
-        btnStart.setMaxSize(100, 50);
+        btnStart.setText("Run Aleph");
+        btnStart.setMaxSize(100, 30);
+        btnStart.setMinSize(100, 30);
         btnStart.setBackground(btnBackground);
 
         Button btnBuild = new Button();
         btnBuild.setText("Build");
         btnBuild.setPadding(new Insets(5));
-        btnBuild.setMaxSize(100, 50);
+        btnBuild.setMaxSize(100, 30);
+        btnBuild.setMinSize(100, 30);
         btnBuild.setBackground(btnBackground);
 
-        Button btnDirChooser = new Button();
-        btnDirChooser.setText("Select a directory");
-        btnStart.setMaxSize(100, 50);
-        btnStart.setBackground(btnBackground);
+        // Construct of the button used to select the directories
+        Button btnDirChooserBuild = new Button("Select your bot folder");
+        ButtonBuilder.buttonDirChooser(btnDirChooserBuild);
+        Button btnDirChooserRun = new Button("Select the .exe file");
+        ButtonBuilder.buttonDirChooser(btnDirChooserRun);
 
-        AtomicReference<File> sharedDir = new AtomicReference<>();
+        // Get Data from lambda statement
+        AtomicReference<File> sharedFileBuild = new AtomicReference<>();
+        btnDirChooserBuild.setOnAction(event -> {
+            sharedFileBuild.set(dChooser.showDialog(pStage));
+            if(sharedFileBuild != null) {
+                btnDirChooserRun.setBackground(new Background(new BackgroundFill(Color.rgb(6, 95, 40), new CornerRadii(5), Insets.EMPTY)));
 
-        btnDirChooser.setOnAction(event -> sharedDir.set(dChooser.showDialog(pStage)));
+                btnDirChooserRun.setOnMouseExited(e -> {
+                    btnDirChooserRun.setBackground(new Background(new BackgroundFill(Color.rgb(6, 95, 40), new CornerRadii(5), Insets.EMPTY)));
+                });
+            }
+        });
 
+        AtomicReference<File> sharedFileRun = new AtomicReference<>();
+        btnDirChooserRun.setOnAction(e -> {
+            sharedFileRun.set(executableChoooser.showOpenDialog(pStage));
+            if(sharedFileRun != null) {
+                btnDirChooserRun.setBackground(new Background(new BackgroundFill(Color.rgb(6, 95, 40), new CornerRadii(5), Insets.EMPTY)));
 
+                btnDirChooserRun.setOnMouseExited(event -> {
+                    btnDirChooserRun.setBackground(new Background(new BackgroundFill(Color.rgb(6, 95, 40), new CornerRadii(5), Insets.EMPTY)));
+                });
+
+            }
+
+        });
 
         // onClick event
         btnStart.setOnAction(event -> {
-            if(sharedDir.get().getAbsolutePath() != null) {
-                System.out.println("Calling botInit() method. . .");
-                try {
-                    botInit(sharedDir.get().getAbsolutePath());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedDir.get().getAbsolutePath());
+            try {
+                if(sharedFileRun.get().getAbsolutePath() != null) {
+                    System.out.println("Calling botInit() method. . .");
+                    try {
+                        BotActions.botRun(sharedFileRun.get().getAbsolutePath(), sharedFileRun.get().getName());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedFileBuild.get().getAbsolutePath());
+
+                    }
+                } else {
+                    System.out.println("TextField is empty");
                 }
-            } else {
-                System.out.println("TextField is empty");
+            } catch (NullPointerException e) {
+                AlertBox.display("ALERT - Empty Location", "The path is null. Please set a valid path.", null);
             }
         });
 
         btnBuild.setOnAction(event -> {
-            if (sharedDir.get().getAbsolutePath() != null) {
-                System.out.println("Calling botBuild() method. . .");
-                try {
-                    botBuild(sharedDir.get().getAbsolutePath());
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedDir.get().getAbsolutePath());
+            try {
+                if (sharedFileBuild.get().getAbsolutePath() != null) {
+                    System.out.println("Calling botBuild() method. . .");
+                    try {
+                        BotActions.botBuild(sharedFileBuild.get().getAbsolutePath());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        AlertBox.display("ALERT - Wrong dir", "The current directory is not valid !", sharedFileBuild.get().getAbsolutePath());
+                    }
+                } else {
+                    System.out.println("TextField is empty");
                 }
-            } else {
-                System.out.println("TextField is empty");
+            } catch (NullPointerException e){
+                AlertBox.display("ALERT - Empty Location", "The path is null. Please set a valid path.", null);
             }
         });
 
@@ -104,14 +137,23 @@ public class Main extends Application {
         Menu menuBuild = new Menu("Build");
         menuBar.getMenus().addAll(menuBuild, menuRun);
 
+        HBox runLayout = new HBox(10);
+        runLayout.getChildren().addAll(btnDirChooserRun, btnStart);
+        runLayout.setAlignment(Pos.CENTER);
+
+        HBox buildLayout = new HBox(10);
+        buildLayout.getChildren().addAll(btnDirChooserBuild, btnBuild);
+        buildLayout.setAlignment(Pos.CENTER);
+
         // Adding of the buttons
-        VBox center = new VBox(5);
-        center.getChildren().addAll( btnDirChooser, btnStart, btnBuild);
+        VBox center = new VBox(15);
+        center.getChildren().addAll(runLayout, buildLayout);
         center.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         center.setAlignment(Pos.CENTER);
 
         // Adding of the stack pane (Container)
         BorderPane borderPane = new BorderPane();
+        borderPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         borderPane.setCenter(center);
         borderPane.setTop(menuVbox);
 
@@ -120,59 +162,12 @@ public class Main extends Application {
         pStage.setScene(pScene);
         pStage.show();
 
-
     }
 
     // Build of the bot
-    public static void botBuild(String botDir) throws IOException {
-
-        if (isWindows) {
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.directory(new File(botDir));
-            processBuilder.command("go build");
-            processBuilder.redirectErrorStream(true);
-            Process p = processBuilder.start();
-
-            System.out.println("Everything is working pretty well");
-
-            InputStream is = p.getInputStream();
-            System.out.println("" + is.read());
-
-
-        } else {
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.directory(new File(botDir));
-            processBuilder.command("sh", "-a", "go", "build");
-            processBuilder.start();
-
-        }
-
-        AlertBox.display("Alert - Task Started", "The command \"go build\" have been launched in :", botDir);
-
-    }
-
-    // Launch of the bot
-    public static void botInit(String botDir) throws IOException {
-
-        if(isWindows) {
-            System.out.println(botDir);
-
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.directory(new File(botDir));
-            processBuilder.command("go run");
-            processBuilder.redirectErrorStream(true);
-            processBuilder.start();
-
-        } else {
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.directory(new File(botDir));
-            processBuilder.command("sh", "-a", "go", "run");
-            processBuilder.start();
-        }
-        AlertBox.display("Alert - Task Started", "The command \"go run\" have been launched in :", botDir);
-
-
-
+    public static void main(String[] args) {
+        System.out.println("Main Method called. . .");
+        launch(args);
     }
 
 }
